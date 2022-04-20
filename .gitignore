@@ -1,7 +1,11 @@
 target/
 
+/import/
+/neo4j/
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
+q
