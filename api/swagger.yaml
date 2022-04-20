@@ -1,0 +1,121 @@
+---
+openapi: "3.0.3"
+info:
+  title: "Sample Warehouse App"
+  description: "This is a warehouse server."
+  contact:
+    name: "API Support"
+    url: "http://www.example.com/support"
+    email: "support@example.com"
+  license:
+    name: "Apache 2.0"
+    url: "https://www.apache.org/licenses/LICENSE-2.0.html"
+  version: "1.0.1"
+paths:
+  /products:
+    get:
+      description: "Returns all pets from the system that the user has access to"
+      responses:
+        "200":
+          description: "List of available products."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvailableProductsResponse"
+        "204":
+          description: "no products available"
+        "400":
+          description: "bad request"
+
+  /sell:
+    post:
+      description: "Returns all pets from the system that the user has access to"
+      requestBody:
+        description: "Sell request"
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/SellRequest"
+      responses:
+        "200":
+          description: "Order is created."
+        "204":
+          description: "Cannot sell, insufficient items"
+        "400":
+          description: "bad request"
+
+
+components:
+  schemas:
+    GeneralError:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          format: "int32"
+        message:
+          type: "string"
+    AvailableProductsResponse:
+      type: "object"
+      properties:
+        availableProducts:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Product"
+    Product:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+        quantity:
+          type: "integer"
+          format: "int32"
+    SellRequest:
+      type: "object"
+      properties:
+        productsToSell:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ProductToSell"
+    ProductToSell:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+          example: "Dinning Table"
+        quantity:
+          type: "integer"
+          format: "int32"
+          example: 1
+  parameters:
+    skipParam:
+      name: "skip"
+      in: "query"
+      description: "number of items to skip"
+      required: true
+      schema:
+        type: "integer"
+        format: "int32"
+    limitParam:
+      name: "limit"
+      in: "query"
+      description: "max records to return"
+      required: true
+      schema:
+        type: "integer"
+        format: "int32"
+  responses:
+    NotFound:
+      description: "Entity not found."
+    IllegalInput:
+      description: "Illegal input for operation."
+    GeneralError:
+      description: "General Error"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/GeneralError"
+
+servers:
+  - url: http://localhost:8080
+    description: Development server
